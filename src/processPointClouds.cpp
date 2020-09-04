@@ -217,7 +217,8 @@ std::vector<typename pcl::PointCloud<PointT>::Ptr> ProcessPointClouds<PointT>::C
     KdTree* tree = new KdTree;
     int i=0;
     std::vector<std::vector<float>> points;
-    for(auto it = cloud->begin();it!= cloud->end();++it){
+    for(auto it = cloud->begin();it!= cloud->end();++it)
+    {
         std::vector<float> point;
         point.push_back(it->x);
         point.push_back(it->y);
@@ -227,7 +228,7 @@ std::vector<typename pcl::PointCloud<PointT>::Ptr> ProcessPointClouds<PointT>::C
         tree->insert(point, i++);
     }
 
-    std::vector<std::vector<int>> myclusters = euclideanCluster(points, tree, clusterTolerance);
+    std::vector<std::vector<int>> myclusters = euclideanCluster(points, tree, clusterTolerance, minSize,maxSize);
 
 
     int clusterId = 0;

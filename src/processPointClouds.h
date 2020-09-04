@@ -73,7 +73,7 @@ public:
         }
     }
     //own implementation of eucledian clustering
-    std::vector<std::vector<int>> euclideanCluster(const std::vector<std::vector<float>>& points, KdTree* tree, float distanceTol)
+    std::vector<std::vector<int>> euclideanCluster(const std::vector<std::vector<float>>& points, KdTree* tree, float distanceTol, int minSize, int maxSize)
     {
 
         // TODO: Fill out this function to return list of indices for each cluster
@@ -92,6 +92,7 @@ public:
 
             std::vector<int> cluster;
             clusterHelper(i,points,cluster,processed,tree,distanceTol);
+            if(cluster.size()>=minSize && cluster.size()<=maxSize)
             clusters.push_back(cluster);
             i++;
 

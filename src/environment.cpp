@@ -140,8 +140,8 @@ void cityBlock2(pcl::visualization::PCLVisualizer::Ptr& viewer, ProcessPointClou
     //Ransac algorithm
     std::pair<pcl::PointCloud<pcl::PointXYZI>::Ptr, pcl::PointCloud<pcl::PointXYZI>::Ptr> segmentCloud = pointProcessorI->SegmentPlane2(filterCloud, 100, 0.2);
     
-    
-    std::vector<pcl::PointCloud<pcl::PointXYZI>::Ptr> cloudClusters = pointProcessorI->Clustering(segmentCloud.first,0.5,30,500);
+    //Eucledian clustering 
+    std::vector<pcl::PointCloud<pcl::PointXYZI>::Ptr> cloudClusters = pointProcessorI->Clustering2(segmentCloud.first,0.5,30,500);//0.5,30,500
 
     int clusterId = 0;
     std::vector<Color> colors = {Color(1,0,0),Color(1,1,0),Color(0,0,1)};
