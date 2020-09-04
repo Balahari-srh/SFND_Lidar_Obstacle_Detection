@@ -127,9 +127,36 @@ void cityBlock(pcl::visualization::PCLVisualizer::Ptr& viewer, ProcessPointCloud
         ++clusterId;
         
     }
-    //renderPointCloud(viewer,segmentCloud.second,"planeCloud",Color(0,1,0));
+    renderPointCloud(viewer,segmentCloud.second,"planeCloud",Color(0,1,0));
 
 
+}
+//Calling implemented functions for lidar obstacle project.
+void cityBlock2(pcl::visualization::PCLVisualizer::Ptr& viewer, ProcessPointClouds<pcl::PointXYZI>* pointProcessorI, const pcl::PointCloud<pcl::PointXYZI>::Ptr& inputCloud)
+{
+    pcl::PointCloud<pcl::PointXYZI>::Ptr filterCloud = pointProcessorI->FilterCloud(inputCloud,0.2f,Eigen::Vector4f(-30,-10,-10,1),Eigen::Vector4f(30,10,20,1));
+    
+    
+    //Ransac algorithm
+    std::pair<pcl::PointCloud<pcl::PointXYZI>::Ptr, pcl::PointCloud<pcl::PointXYZI>::Ptr> segmentCloud = pointProcessorI->SegmentPlane2(filterCloud, 100, 0.2);
+    
+    
+    std::vector<pcl::PointCloud<pcl::PointXYZI>::Ptr> cloudClusters = pointProcessorI->Clustering(segmentCloud.first,0.5,30,500);
+
+    int clusterId = 0;
+    std::vector<Color> colors = {Color(1,0,0),Color(1,1,0),Color(0,0,1)};
+    for(pcl::PointCloud<pcl::PointXYZI>::Ptr cluster : cloudClusters)
+    {
+        std::cout << "cluster size";
+        pointProcessorI->numPoints(cluster);
+        renderPointCloud(viewer,cluster,"obstcloud"+std::to_string(clusterId),colors[clusterId%colors.size()]);
+        Box box = pointProcessorI->BoundingBox(cluster);
+        renderBox(viewer,box,clusterId);
+        ++clusterId;
+        
+    }
+    renderPointCloud(viewer,segmentCloud.second,"planeCloud",Color(0,1,0));
+ 
 }
 //setAngle: SWITCH CAMERA ANGLE {XY, TopDown, Side, FPS}
 void initCamera(CameraAngle setAngle, pcl::visualization::PCLVisualizer::Ptr& viewer)
@@ -176,7 +203,7 @@ int main (int argc, char** argv)
 
         // Load pcd and run obstacle detection process
         inputCloudI = pointProcessorI->loadPcd((*streamIterator).string());
-        cityBlock(viewer, pointProcessorI, inputCloudI);
+        cityBlock2(viewer, pointProcessorI, inputCloudI);
 
         streamIterator++;
         if(streamIterator == stream.end())
